@@ -19,18 +19,19 @@ import (
 
 	"github.com/GoogleCloudPlatform/container-structure-test/pkg/drivers"
 	"github.com/GoogleCloudPlatform/container-structure-test/pkg/output"
-	types "github.com/GoogleCloudPlatform/container-structure-test/pkg/types/unversioned"
+	"github.com/GoogleCloudPlatform/container-structure-test/pkg/tests"
+	"github.com/GoogleCloudPlatform/container-structure-test/pkg/types/unversioned"
 )
 
 type StructureTest struct {
 	DriverImpl         func(drivers.DriverConfig) (drivers.Driver, error)
 	DriverArgs         drivers.DriverConfig
-	GlobalEnvVars      []types.EnvVar      `yaml:"globalEnvVars"`
-	CommandTests       []CommandTest       `yaml:"commandTests"`
-	FileExistenceTests []FileExistenceTest `yaml:"fileExistenceTests"`
-	FileContentTests   []FileContentTest   `yaml:"fileContentTests"`
-	MetadataTest       MetadataTest        `yaml:"metadataTest"`
-	LicenseTests       []LicenseTest       `yaml:"licenseTests"`
+	GlobalEnvVars      []unversioned.EnvVar `yaml:"globalEnvVars"`
+	CommandTests       []CommandTest        `yaml:"commandTests"`
+	FileExistenceTests []FileExistenceTest  `yaml:"fileExistenceTests"`
+	FileContentTests   []FileContentTest    `yaml:"fileContentTests"`
+	MetadataTest       MetadataTest         `yaml:"metadataTest"`
+	LicenseTests       []LicenseTest        `yaml:"licenseTests"`
 }
 
 func (st *StructureTest) NewDriver() (drivers.Driver, error) {
@@ -42,8 +43,8 @@ func (st *StructureTest) SetDriverImpl(f func(drivers.DriverConfig) (drivers.Dri
 	st.DriverArgs = args
 }
 
-func (st *StructureTest) RunAll(o *output.OutWriter) []*types.TestResult {
-	results := make([]*types.TestResult, 0)
+func (st *StructureTest) RunAll(o *output.OutWriter) []*unversioned.TestResult {
+	results := make([]*unversioned.TestResult, 0)
 	results = append(results, st.RunCommandTests(o)...)
 	results = append(results, st.RunFileExistenceTests(o)...)
 	results = append(results, st.RunFileContentTests(o)...)
@@ -52,14 +53,26 @@ func (st *StructureTest) RunAll(o *output.OutWriter) []*types.TestResult {
 	return results
 }
 
-func (st *StructureTest) RunCommandTests(o *output.OutWriter) []*types.TestResult {
-	results := make([]*types.TestResult, 0)
-	for _, test := range st.CommandTests {
-		if err := test.Validate(); err != nil {
-			logrus.Error(err.Error())
-			continue
+func validateAndInitDriver(t tests.Test, st *StructureTest) (drivers.Driver, error) {
+	if err := t.Validate(); err != nil {
+		return nil, err
+	}
+
+	driver, err := st.NewDriver()
+	if err != nil {
+		if driver != nil {
+			driver.Destroy()
 		}
-		driver, err := st.NewDriver()
+		return nil, err
+	}
+
+	return driver, nil
+}
+
+func (st *StructureTest) RunCommandTests(o *output.OutWriter) []*unversioned.TestResult {
+	results := make([]*unversioned.TestResult, 0)
+	for _, test := range st.CommandTests {
+		driver, err := validateAndInitDriver(&test, st)
 		if err != nil {
 			logrus.Error(err.Error())
 			continue
@@ -82,8 +95,8 @@ func (st *StructureTest) RunCommandTests(o *output.OutWriter) []*types.TestResul
 	return results
 }
 
-func (st *StructureTest) RunFileExistenceTests(o *output.OutWriter) []*types.TestResult {
-	results := make([]*types.TestResult, 0)
+func (st *StructureTest) RunFileExistenceTests(o *output.OutWriter) []*unversioned.TestResult {
+	results := make([]*unversioned.TestResult, 0)
 	for _, test := range st.FileExistenceTests {
 		if err := test.Validate(); err != nil {
 			logrus.Error(err.Error())
@@ -101,8 +114,8 @@ func (st *StructureTest) RunFileExistenceTests(o *output.OutWriter) []*types.Tes
 	return results
 }
 
-func (st *StructureTest) RunFileContentTests(o *output.OutWriter) []*types.TestResult {
-	results := make([]*types.TestResult, 0)
+func (st *StructureTest) RunFileContentTests(o *output.OutWriter) []*unversioned.TestResult {
+	results := make([]*unversioned.TestResult, 0)
 	for _, test := range st.FileContentTests {
 		if err := test.Validate(); err != nil {
 			logrus.Error(err.Error())
@@ -121,7 +134,7 @@ func (st *StructureTest) RunFileContentTests(o *output.OutWriter) []*types.TestR
 	return results
 }
 
-func (st *StructureTest) RunMetadataTests(o *output.OutWriter) *types.TestResult {
+func (st *StructureTest) RunMetadataTests(o *output.OutWriter) *unversioned.TestResult {
 	if err := st.MetadataTest.Validate(); err != nil {
 		logrus.Error(err.Error())
 		return nil
@@ -136,8 +149,8 @@ func (st *StructureTest) RunMetadataTests(o *output.OutWriter) *types.TestResult
 	return result
 }
 
-func (st *StructureTest) RunLicenseTests(o *output.OutWriter) []*types.TestResult {
-	results := make([]*types.TestResult, 0)
+func (st *StructureTest) RunLicenseTests(o *output.OutWriter) []*unversioned.TestResult {
+	results := make([]*unversioned.TestResult, 0)
 	for _, test := range st.LicenseTests {
 		driver, err := st.NewDriver()
 		if err != nil {

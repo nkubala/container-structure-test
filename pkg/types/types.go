@@ -17,9 +17,9 @@ package types
 import (
 	"github.com/GoogleCloudPlatform/container-structure-test/pkg/drivers"
 	"github.com/GoogleCloudPlatform/container-structure-test/pkg/output"
+	"github.com/GoogleCloudPlatform/container-structure-test/pkg/tests/v1"
+	"github.com/GoogleCloudPlatform/container-structure-test/pkg/tests/v2"
 	types "github.com/GoogleCloudPlatform/container-structure-test/pkg/types/unversioned"
-	"github.com/GoogleCloudPlatform/container-structure-test/pkg/types/v1"
-	"github.com/GoogleCloudPlatform/container-structure-test/pkg/types/v2"
 )
 
 type StructureTest interface {
