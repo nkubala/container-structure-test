@@ -1,4 +1,4 @@
-v1.10.0 Release - 01/07/2021
+# v1.10.0 Release - 01/07/2021
 
 Highlights:
 * :sparkles: Add new output format JUnit [#254](https://github.com/GoogleContainerTools/container-structure-test/pull/254)
@@ -10,12 +10,15 @@ Big thanks to everyone who contributed to this release:
 
 ## Distribution
 
-container-structure-test is distributed in binary form for Linux (arm64 and amd64) and OS X systems for the v1.10.0 release, as well as a container image for running tests in Google Cloud Builder.
+container-structure-test is distributed in binary form for Linux (arm64, amd64, s390x, ppc64le), OS X, and Windows systems for the v1.10.0 release, as well as a container image for running tests in Google Cloud Builder.
 
 Binaries are available on Google Cloud Storage. The direct GCS links are:
-[Darwin/amd64](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-darwin-amd64)
 [Linux/amd64](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-amd64)
 [Linux/arm64](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-arm64)
+[Linux/s390x](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-s390x)
+[Linux/ppc64le](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-ppc64le)
+[Darwin/amd64](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-darwin-amd64)
+[Windows](https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-windows-amd64.exe)
 
 The container image can be found at `gcr.io/gcp-runtimes/container-structure-test:v1.10.0`.
 
@@ -27,6 +30,9 @@ curl -LO https://storage.googleapis.com/container-structure-test/v1.10.0/contain
 ```
 Feel free to leave off the `sudo mv container-structure-test /usr/local/bin` if you would like to add container-structure-test to your path manually.
 
+### Windows
+ https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-windows-amd64.exe
+
 ### Linux
 amd64: 
 ```shell
@@ -35,6 +41,14 @@ curl -LO https://storage.googleapis.com/container-structure-test/v1.10.0/contain
 arm64: 
 ```shell
 curl -LO https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-arm64 && mv container-structure-test-linux-arm64 container-structure-test && chmod +x container-structure-test && sudo mv container-structure-test /usr/local/bin/
+```
+s390x: 
+```shell
+curl -LO https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-s390x && mv container-structure-test-linux-s390x container-structure-test && chmod +x container-structure-test && sudo mv container-structure-test /usr/local/bin/
+```
+ppc64le: 
+```shell
+curl -LO https://storage.googleapis.com/container-structure-test/v1.10.0/container-structure-test-linux-ppc64le && mv container-structure-test-linux-ppc64le container-structure-test && chmod +x container-structure-test && sudo mv container-structure-test /usr/local/bin/
 ```
 Feel free to leave off the `sudo mv container-structure-test /usr/local/bin` if you would like to add container-structure-test to your path manually.
 
